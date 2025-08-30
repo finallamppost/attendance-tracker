@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Calendar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📅 Attendance Calendar</h1>
+
+  <div class="controls">
+    <label for="month">Month:</label>
+    <select id="month"></select>
+
+    <label for="year">Year:</label>
+    <input type="number" id="year" min="2020" max="2100" value="2025">
+
+    <button onclick="generateCalendar()">Generate Calendar</button>
+    <button onclick="exportCSV()">Export CSV</button>
+  </div>
+
+  <div id="calendar" class="calendar"></div>
+
+  <h2>📊 Monthly Summary</h2>
+  <div id="summary"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
