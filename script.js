@@ -1,46 +1,6 @@
-// 🔌 Supabase Initialization
 const supabaseUrl = "https://walivuqpkngksvuaosfv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-const auth = supabase.auth;
-
-async function signInWithEmail(email, password) {
-  const { error } = await auth.signInWithPassword({ email, password });
-  if (error) console.error("Login error:", error);
-}
-
-async function signUpWithEmail(email, password) {
-  const { error } = await auth.signUp({ email, password });
-  if (error) console.error("Signup error:", error);
-}
-
-
-// ✅ Save attendance to Supabase
-async function saveData(key, type, note) {
-  const { error } = await supabase
-    .from("attendance")
-    .upsert([{ date: key, type, note }]);
-
-  if (error) {
-    console.error("Error saving attendance:", error);
-  }
-}
-
-// 📥 Load attendance from Supabase
-async function loadData(key) {
-  const { data, error } = await supabase
-    .from("attendance")
-    .select("*")
-    .eq("date", key);
-
-  if (error) {
-    console.error("Error loading attendance:", error);
-    return { type: "WFH", note: "" };
-  }
-
-  return data.length > 0 ? data[0] : { type: "WFH", note: "" };
-}
 
 const attendanceTypes = ["Office", "WFH", "Holiday", "PTO"];
 const colorMap = {
@@ -50,8 +10,58 @@ const colorMap = {
   "PTO": "#FF9800"
 };
 
+// 🔐 GitHub Login
+document.getElementById("login-btn").onclick = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: "https://finallamppost.github.io/attendance-tracker/"
+    }
+  });
+  if (error) console.error("Login error:", error);
+};
+
+document.getElementById("logout-btn").onclick = async () => {
+  await supabase.auth.signOut();
+  location.reload();
+};
+
+async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session && session.user) {
+    document.getElementById("calendar-controls").style.display = "block";
+    document.getElementById("logout-btn").style.display = "inline-block";
+    document.getElementById("login-btn").style.display = "none";
+    document.getElementById("user-info").innerText = `Signed in as ${session.user.email || "GitHub user"}`;
+    populateMonthSelector();
+    generateCalendar();
+  } else {
+    document.getElementById("calendar-controls").style.display = "none";
+    document.getElementById("logout-btn").style.display = "none";
+    document.getElementById("login-btn").style.display = "inline-block";
+    document.getElementById("user-info").innerText = "";
+  }
+}
+
+supabase.auth.onAuthStateChange(() => checkSession());
+checkSession();
+
+async function saveData(key, type, note) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from("attendance").upsert([{ date: key, type, note, user_id: user.id }]);
+}
+
+async function loadData(key) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { type: "WFH", note: "" };
+  const { data } = await supabase.from("attendance").select("*").eq("date", key).eq("user_id", user.id);
+  return data.length > 0 ? data[0] : { type: "WFH", note: "" };
+}
+
 function populateMonthSelector() {
   const monthSelect = document.getElementById("month");
+  monthSelect.innerHTML = "";
   for (let i = 0; i < 12; i++) {
     const option = document.createElement("option");
     option.value = i;
@@ -72,12 +82,10 @@ async function generateCalendar() {
   const startDay = firstDay.getDay();
 
   for (let i = 0; i < startDay; i++) {
-    const emptyBox = document.createElement("div");
-    calendarDiv.appendChild(emptyBox);
+    calendarDiv.appendChild(document.createElement("div"));
   }
 
   for (let day = 1; day <= lastDay.getDate(); day++) {
-    const date = new Date(year, month, day);
     const key = `${year}-${month + 1}-${day}`;
     const saved = await loadData(key);
 
@@ -163,7 +171,3 @@ async function exportCSV() {
   a.click();
   URL.revokeObjectURL(url);
 }
-
-populateMonthSelector();
-generateCalendar();
-
