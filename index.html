@@ -39,7 +39,9 @@
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     // 🔐 GitHub Login with redirect
+    alert(,outside');
     document.getElementById("login-btn").onclick = async () => {
+alert(,inside');
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
@@ -75,4 +77,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
