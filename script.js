@@ -1,3 +1,5 @@
+console.log("script.js loaded");
+
 document.addEventListener("DOMContentLoaded", () => {
   // 🔌 Supabase Initialization
   const supabase = supabase.createClient(
@@ -159,3 +161,4 @@ document.addEventListener("DOMContentLoaded", () => {
   async function exportCSV() {
     const month = parseInt(document.getElementById("month").value);
     const year = parseInt(document.getElementById("year").value
+
