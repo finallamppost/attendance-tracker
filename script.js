@@ -1,11 +1,11 @@
-console.log("script.js loaded");
-
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔌 Supabase Initialization
+  // ✅ Supabase Initialization
   const supabase = supabase.createClient(
     "https://walivuqpkngksvuaosfv.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // replace with your full Supabase key
   );
+
+  console.log("Supabase initialized");
 
   const attendanceTypes = ["Office", "WFH", "Holiday", "PTO"];
   const colorMap = {
@@ -16,8 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ✅ GitHub Login
-  document.getElementById("login-btn").onclick = async () => {
-    alert("Login button clicked"); // Test alert
+  const loginBtn = document.getElementById("login-btn");
+  if (!loginBtn) {
+    console.error("Login button not found");
+    return;
+  }
+
+  loginBtn.onclick = async () => {
+    alert("Login button clicked");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
@@ -149,16 +155,4 @@ document.addEventListener("DOMContentLoaded", () => {
       if (type === "Office") officeDays++;
     });
 
-    const percent = totalWorking > 0 ? ((officeDays / totalWorking) * 100).toFixed(2) : 0;
-    document.getElementById("summary").innerHTML = `
-      <p>Total Working Days: ${totalWorking}</p>
-      <p>Office Days: ${officeDays}</p>
-      <p>Attendance %: ${percent}%</p>
-      ${percent >= 60 ? "<p style='color:green;'>✅ Target Met!</p>" : "<p style='color:red;'>⚠️ Target Not Met</p>"}
-    `;
-  }
-
-  async function exportCSV() {
-    const month = parseInt(document.getElementById("month").value);
-    const year = parseInt(document.getElementById("year").value
-
+    const percent
