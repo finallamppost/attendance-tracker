@@ -155,11 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const percent = totalWorking > 0 ? ((officeDays / totalWorking) * 100).toFixed(2) : 0;
     document.getElementById("summary").innerHTML = `
-      <p>Total Working Days: ${totalWorking}</p>
-      <p>Office Days: ${officeDays}</p>
-      <p>Attendance %: ${percent}%</p>
-      ${percent >= 60 ? "<p style='color:green;'>✅ Target Met!</p>" : "<p style='color:red;'>⚠️ Target Not Met</p>"}
-    `;
+  <p>Attendance = ${percent}%</p>
+  ${percent >= 80 
+    ? '<p style="color:green;">✅ Target Met</p>' 
+    : '<p style="color:red;">⚠️ Target Not Met</p>'}
+`;
+
   }
 
   async function exportCSV() {
@@ -185,3 +186,4 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   }
 });
+
