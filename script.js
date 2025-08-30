@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script loaded");
+
   // 🔌 Supabase Initialization
   const supabase = supabase.createClient(
     "https://walivuqpkngksvuaosfv.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI" // ← replace with your full Supabase key
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI"
   );
 
   const attendanceTypes = ["Office", "WFH", "Holiday", "PTO"];
@@ -193,5 +194,3 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   }
 });
-
-
