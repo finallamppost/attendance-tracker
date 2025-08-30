@@ -3,6 +3,19 @@ const supabaseUrl = "https://walivuqpkngksvuaosfv.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+const auth = supabase.auth;
+
+async function signInWithEmail(email, password) {
+  const { error } = await auth.signInWithPassword({ email, password });
+  if (error) console.error("Login error:", error);
+}
+
+async function signUpWithEmail(email, password) {
+  const { error } = await auth.signUp({ email, password });
+  if (error) console.error("Signup error:", error);
+}
+
+
 // ✅ Save attendance to Supabase
 async function saveData(key, type, note) {
   const { error } = await supabase
@@ -153,3 +166,4 @@ async function exportCSV() {
 
 populateMonthSelector();
 generateCalendar();
+
