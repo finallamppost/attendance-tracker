@@ -1,11 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script loaded");
 
-  // 🔌 Supabase Initialization
-  const supabase = supabase.createClient(
+  // ✅ First declare the variable
+  let supabase;
+
+  // ✅ Then initialize it using the SDK
+  supabase = window.supabase.createClient(
     "https://walivuqpkngksvuaosfv.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI"
   );
+
+  // ✅ Now you can safely use supabase below
+  // ... rest of your code ...
+});
+
 
   const attendanceTypes = ["Office", "WFH", "Holiday", "PTO"];
   const colorMap = {
@@ -194,3 +202,4 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   }
 });
+
