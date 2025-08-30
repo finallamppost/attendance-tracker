@@ -58,17 +58,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔍 Initial Session Check
+  // 🔍 Initial Session Check (updated)
   supabase.auth.getSession().then(({ data }) => {
     const session = data.session;
     console.log("Initial session:", session);
     if (session && session.user) {
+      console.log("User is authenticated:", session.user.email);
       document.getElementById("user-info").innerText = `Signed in as ${session.user.email}`;
       loginBtn.style.display = "none";
       logoutBtn.style.display = "inline-block";
       document.getElementById("calendar-controls").style.display = "block";
       populateMonthSelector();
       generateCalendar();
+    } else {
+      console.log("No active session found");
+      document.getElementById("calendar-controls").style.display = "none";
+      loginBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+      document.getElementById("user-info").innerText = "";
     }
   });
 
