@@ -2,57 +2,55 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ Supabase Initialization
   const supabase = supabase.createClient(
     "https://walivuqpkngksvuaosfv.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // replace with your full Supabase key
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // ← replace with your full Supabase key
   );
-
-  console.log("Supabase initialized");
 
   const attendanceTypes = ["Office", "WFH", "Holiday", "PTO"];
   const colorMap = {
-    "Office": "#8BC34A",
-    "WFH": "#2196F3",
-    "Holiday": "#BDBDBD",
-    "PTO": "#FF9800"
+    Office: "#8BC34A",
+    WFH: "#2196F3",
+    Holiday: "#BDBDBD",
+    PTO: "#FF9800"
   };
 
   // ✅ GitHub Login
   const loginBtn = document.getElementById("login-btn");
-  if (!loginBtn) {
-    console.error("Login button not found");
-    return;
+  if (loginBtn) {
+    loginBtn.onclick = async () => {
+      alert("Login button clicked");
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: "https://finallamppost.github.io/attendance-tracker/"
+        }
+      });
+      if (error) console.error("Login error:", error);
+    };
   }
 
-  loginBtn.onclick = async () => {
-    alert("Login button clicked");
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "github",
-      options: {
-        redirectTo: "https://finallamppost.github.io/attendance-tracker/"
-      }
-    });
-    if (error) console.error("Login error:", error);
-  };
-
   // ✅ Logout
-  document.getElementById("logout-btn").onclick = async () => {
-    await supabase.auth.signOut();
-    location.reload();
-  };
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+      await supabase.auth.signOut();
+      location.reload();
+    };
+  }
 
   // ✅ Session Check
   async function checkSession() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session && session.user) {
       document.getElementById("calendar-controls").style.display = "block";
-      document.getElementById("logout-btn").style.display = "inline-block";
-      document.getElementById("login-btn").style.display = "none";
+      logoutBtn.style.display = "inline-block";
+      loginBtn.style.display = "none";
       document.getElementById("user-info").innerText = `Signed in as ${session.user.email || "GitHub user"}`;
       populateMonthSelector();
       generateCalendar();
     } else {
       document.getElementById("calendar-controls").style.display = "none";
-      document.getElementById("logout-btn").style.display = "none";
-      document.getElementById("login-btn").style.display = "inline-block";
+      logoutBtn.style.display = "none";
+      loginBtn.style.display = "inline-block";
       document.getElementById("user-info").innerText = "";
     }
   }
@@ -80,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < 12; i++) {
       const option = document.createElement("option");
       option.value = i;
-      option.text = new Date(0, i).toLocaleString('default', { month: 'long' });
+      option.text = new Date(0, i).toLocaleString("default", { month: "long" });
       monthSelect.appendChild(option);
     }
     monthSelect.value = new Date().getMonth();
@@ -155,4 +153,35 @@ document.addEventListener("DOMContentLoaded", () => {
       if (type === "Office") officeDays++;
     });
 
-    const percent
+    const percent = totalWorking > 0 ? ((officeDays / totalWorking) * 100).toFixed(2) : 0;
+    document.getElementById("summary").innerHTML = `
+      <p>Total Working Days: ${totalWorking}</p>
+      <p>Office Days: ${officeDays}</p>
+      <p>Attendance %: ${percent}%</p>
+      ${percent >= 60 ? "<p style='color:green;'>✅ Target Met!</p>" : "<p style='color:red;'>⚠️ Target Not Met</p>"}
+    `;
+  }
+
+  async function exportCSV() {
+    const month = parseInt(document.getElementById("month").value);
+    const year = parseInt(document.getElementById("year").value);
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    let csv = "Date,Type,Note\n";
+
+    for (let day = 1; day <= lastDay; day++) {
+      const key = `${year}-${month + 1}-${day}`;
+      const saved = await loadData(key);
+      if (saved) {
+        csv += `${key},${saved.type},${saved.note}\n`;
+      }
+    }
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Attendance_${year}_${month + 1}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+});
