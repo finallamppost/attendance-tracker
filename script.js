@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Script loaded");
   // 🔌 Supabase Initialization
   const supabase = supabase.createClient(
     "https://walivuqpkngksvuaosfv.supabase.co",
@@ -192,4 +193,5 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   }
 });
+
 
