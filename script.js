@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Supabase Initialization
+  // 🔌 Supabase Initialization
   const supabase = supabase.createClient(
     "https://walivuqpkngksvuaosfv.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // ← replace with your full Supabase key
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     PTO: "#FF9800"
   };
 
-  // ✅ GitHub Login
+  // 🔐 GitHub Login
   const loginBtn = document.getElementById("login-btn");
   if (loginBtn) {
     loginBtn.onclick = async () => {
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // ✅ Logout
+  // 🔓 Logout
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.onclick = async () => {
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // ✅ Session Check
+  // 🧠 Session Check
   async function checkSession() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session && session.user) {
@@ -58,13 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
   supabase.auth.onAuthStateChange(() => checkSession());
   checkSession();
 
-  // ✅ Attendance Logic
+  // 📝 Attendance Save
   async function saveData(key, type, note) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     await supabase.from("attendance").upsert([{ date: key, type, note, user_id: user.id }]);
   }
 
+  // 📥 Attendance Load
   async function loadData(key) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { type: "WFH", note: "" };
@@ -72,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return data.length > 0 ? data[0] : { type: "WFH", note: "" };
   }
 
+  // 📅 Month Selector
   function populateMonthSelector() {
     const monthSelect = document.getElementById("month");
     monthSelect.innerHTML = "";
@@ -84,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     monthSelect.value = new Date().getMonth();
   }
 
+  // 🧮 Calendar Generator
   async function generateCalendar() {
     const month = parseInt(document.getElementById("month").value);
     const year = parseInt(document.getElementById("year").value);
@@ -142,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSummary();
   }
 
+  // 📊 Summary
   function updateSummary() {
     const boxes = document.querySelectorAll(".day-box");
     let totalWorking = 0;
@@ -155,14 +159,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const percent = totalWorking > 0 ? ((officeDays / totalWorking) * 100).toFixed(2) : 0;
     document.getElementById("summary").innerHTML = `
-  <p>Attendance = ${percent}%</p>
-  ${percent >= 80 
-    ? '<p style="color:green;">✅ Target Met</p>' 
-    : '<p style="color:red;">⚠️ Target Not Met</p>'}
-`;
-
+      <p>Attendance = ${percent}%</p>
+      ${
+        percent >= 80
+          ? '<p style="color:green;">✅ Target Met</p>'
+          : '<p style="color:red;">⚠️ Target Not Met</p>'
+      }
+    `;
   }
 
+  // 📤 Export CSV
   async function exportCSV() {
     const month = parseInt(document.getElementById("month").value);
     const year = parseInt(document.getElementById("year").value);
@@ -186,4 +192,3 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   }
 });
-
