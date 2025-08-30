@@ -10,8 +10,9 @@ const colorMap = {
   "PTO": "#FF9800"
 };
 
-// 🔐 GitHub Login
+// ✅ GitHub Login Test
 document.getElementById("login-btn").onclick = async () => {
+  alert("Login button clicked"); // Test alert
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
