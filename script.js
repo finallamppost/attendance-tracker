@@ -1,3 +1,8 @@
+// 🔌 Supabase Initialization 
+const supabaseUrl = "https://walivuqpkngksvuaosfv.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI";
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
 const attendanceTypes = ["Office", "WFH", "Holiday", "PTO"];
 const colorMap = {
   "Office": "#8BC34A",
@@ -124,3 +129,4 @@ function exportCSV() {
 
 populateMonthSelector();
 generateCalendar();
+
