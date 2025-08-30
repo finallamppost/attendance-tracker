@@ -38,10 +38,13 @@
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI";
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 🔐 GitHub Login
+    // 🔐 GitHub Login with redirect
     document.getElementById("login-btn").onclick = async () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
+        options: {
+          redirectTo: "https://finalformpost.github.io/attendance-tracker/"
+        }
       });
       if (error) console.error("Login error:", error);
     };
