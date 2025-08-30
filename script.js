@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       populateMonthSelector();
       generateCalendar();
 
-      // 🌐 IP Logging
+      // 🌐 IP Logging with error handling
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
         .then(data => {
@@ -76,9 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
               user_id: session.user.id,
               email: session.user.email,
               ip: data.ip,
-              timestamp: new Date()
+              timestamp: new Date().toISOString()
             }
-          ]);
+          ]).then(({ error }) => {
+            if (error) {
+              console.error("Insert error:", error.message);
+            } else {
+              console.log("✅ Login log inserted successfully");
+            }
+          });
+        })
+        .catch(err => {
+          console.error("IP fetch error:", err.message);
         });
     } else {
       console.log("No active session found");
@@ -212,8 +221,4 @@ document.addEventListener("DOMContentLoaded", () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Attendance_${year}_${month + 1}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-});
+    a.download = `Attendance_${year}_${month
