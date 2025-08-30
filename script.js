@@ -202,23 +202,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     `;
   }
+async function exportCSV() {
+  const month = parseInt(document.getElementById("month").value);
+  const year = parseInt(document.getElementById("year").value);
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  let csv = "Date,Type,Note\n";
 
-  async function exportCSV() {
-    const month = parseInt(document.getElementById("month").value);
-    const year = parseInt(document.getElementById("year").value);
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    let csv = "Date,Type,Note\n";
-
-    for (let day = 1; day <= lastDay; day++) {
-      const key = `${year}-${month + 1}-${day}`;
-      const saved = await loadData(key);
-      if (saved) {
-        csv += `${key},${saved.type},${saved.note}\n`;
-      }
+  for (let day = 1; day <= lastDay; day++) {
+    const key = `${year}-${month + 1}-${day}`;
+    const saved = await loadData(key);
+    if (saved) {
+      csv += `${key},${saved.type},${saved.note}\n`;
     }
+  }
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Attendance_${year}_${month
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Attendance_${year}_${month + 1}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+ 
