@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       populateMonthSelector();
       generateCalendar();
 
-      // 🌐 IP Logging with error handling
+      // 🌐 IP Logging
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
         .then(data => {
@@ -76,18 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
               user_id: session.user.id,
               email: session.user.email,
               ip: data.ip,
-              timestamp: new Date().toISOString()
+              timestamp: new Date()
             }
-          ]).then(({ error }) => {
-            if (error) {
-              console.error("Insert error:", error.message);
-            } else {
-              console.log("✅ Login log inserted successfully");
-            }
-          });
-        })
-        .catch(err => {
-          console.error("IP fetch error:", err.message);
+          ]);
         });
     } else {
       console.log("No active session found");
@@ -202,27 +193,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     `;
   }
-async function exportCSV() {
-  const month = parseInt(document.getElementById("month").value);
-  const year = parseInt(document.getElementById("year").value);
-  const lastDay = new Date(year, month + 1, 0).getDate();
-  let csv = "Date,Type,Note\n";
 
-  for (let day = 1; day <= lastDay; day++) {
-    const key = `${year}-${month + 1}-${day}`;
-    const saved = await loadData(key);
-    if (saved) {
-      csv += `${key},${saved.type},${saved.note}\n`;
+  async function exportCSV() {
+    const month = parseInt(document.getElementById("month").value);
+    const year = parseInt(document.getElementById("year").value);
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    let csv = "Date,Type,Note\n";
+
+    for (let day = 1; day <= lastDay; day++) {
+      const key = `${year}-${month + 1}-${day}`;
+      const saved = await loadData(key);
+      if (saved) {
+        csv += `${key},${saved.type},${saved.note}\n`;
+      }
     }
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Attendance_${year}_${month + 1}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `Attendance_${year}_${month + 1}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
- 
+});
