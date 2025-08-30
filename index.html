@@ -32,50 +32,9 @@
   <h2>📊 Monthly Summary</h2>
   <div id="summary"></div>
 
-  <script>
-    // 🔌 Supabase Initialization
-    const supabaseUrl = "https://walivuqpkngksvuaosfv.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhbGl2dXFwa25na3N2dWFvc2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTAwNjksImV4cCI6MjA3MjEyNjA2OX0.QhmBTMRITyc-uMj0FJzYWABEY6Yg2Fp9jECv811Z-PI";
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-    // 🔐 GitHub Login with redirect
-    alert(,outside');
-    document.getElementById("login-btn").onclick = async () => {
-alert(,inside');
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "github",
-        options: {
-          redirectTo: "https://finallamppost.github.io/attendance-tracker/"
-        }
-      });
-      if (error) console.error("Login error:", error);
-    };
-
-    document.getElementById("logout-btn").onclick = async () => {
-      await supabase.auth.signOut();
-      location.reload();
-    };
-
-    // 🧠 Check Auth State
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session && session.user) {
-        document.getElementById("calendar-controls").style.display = "block";
-        document.getElementById("logout-btn").style.display = "inline-block";
-        document.getElementById("login-btn").style.display = "none";
-        document.getElementById("user-info").innerText = `Signed in as ${session.user.email || "GitHub user"}`;
-        populateMonthSelector();
-        generateCalendar();
-      } else {
-        document.getElementById("calendar-controls").style.display = "none";
-        document.getElementById("logout-btn").style.display = "none";
-        document.getElementById("login-btn").style.display = "inline-block";
-        document.getElementById("user-info").innerText = "";
-      }
-    });
-  </script>
-
+  <!-- 🔗 Link to your JavaScript file -->
   <script src="script.js"></script>
 </body>
 </html>
 
-
+  
