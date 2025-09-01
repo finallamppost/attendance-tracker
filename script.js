@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("login-btn");
   if (loginBtn) {
     loginBtn.onclick = async () => {
-      console.log("Login button clicked");
       alert("Redirecting to GitHub...");
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
@@ -38,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   supabase.auth.onAuthStateChange((_event, session) => {
-    console.log("Auth state changed:", session);
     if (session && session.user) {
       document.getElementById("user-info").innerText = `Signed in as ${session.user.email}`;
       loginBtn.style.display = "none";
@@ -56,9 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   supabase.auth.getSession().then(({ data }) => {
     const session = data.session;
-    console.log("Initial session:", session);
     if (session && session.user) {
-      console.log("User is authenticated:", session.user.email);
       document.getElementById("user-info").innerText = `Signed in as ${session.user.email}`;
       loginBtn.style.display = "none";
       logoutBtn.style.display = "inline-block";
@@ -66,11 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
       populateMonthSelector();
       generateCalendar();
 
-      // 🌐 IP Logging
       fetch("https://api.ipify.org?format=json")
         .then(res => res.json())
         .then(data => {
-          console.log("User IP:", data.ip);
           supabase.from("login_logs").insert([
             {
               user_id: session.user.id,
@@ -80,12 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           ]);
         });
-    } else {
-      console.log("No active session found");
-      document.getElementById("calendar-controls").style.display = "none";
-      loginBtn.style.display = "inline-block";
-      logoutBtn.style.display = "none";
-      document.getElementById("user-info").innerText = "";
     }
   });
 
@@ -120,12 +108,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const calendarDiv = document.getElementById("calendar");
     calendarDiv.innerHTML = "";
 
+    // Weekday headers
+    const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    weekdays.forEach(day => {
+      const header = document.createElement("div");
+      header.className = "weekday-header";
+      header.innerText = day;
+      calendarDiv.appendChild(header);
+    });
+
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const startDay = firstDay.getDay();
 
     for (let i = 0; i < startDay; i++) {
-      calendarDiv.appendChild(document.createElement("div"));
+      const empty = document.createElement("div");
+      empty.className = "empty-day";
+      calendarDiv.appendChild(empty);
     }
 
     for (let day = 1; day <= lastDay.getDate(); day++) {
@@ -150,9 +149,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       box.appendChild(typeSelect);
 
-      const noteInput = document.createElement("input");
-      noteInput.type = "text";
-      noteInput.placeholder = "Note";
+      const noteInput = document.createElement("textarea");
+      noteInput.rows = 5;
+      noteInput.placeholder = "Note (min 5 lines)";
       noteInput.value = saved.note;
       box.appendChild(noteInput);
 
@@ -204,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const key = `${year}-${month + 1}-${day}`;
       const saved = await loadData(key);
       if (saved) {
-        csv += `${key},${saved.type},${saved.note}\n`;
+        csv += `"${key}","${saved.type}","${saved.note.replace(/\n/g, ' ')}"\n`;
       }
     }
 
